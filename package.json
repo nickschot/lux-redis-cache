@@ -1,0 +1,45 @@
+{
+  "name": "lux-redis",
+  "version": "0.1.0",
+  "description": "Redis middleware.",
+  "keywords": [
+    "redis",
+    "lux",
+    "lux-middleware"
+  ],
+  "repository": "github:nickschot/lux-redis",
+  "bugs": {
+    "url": "http://github.com/nickschot/lux-redis/issues"
+  },
+  "author": "Nick Schot",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "babel lib -d dist --source-maps",
+    "test": "mocha --compilers js:babel-core/register -R spec",
+    "coverall": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
+    "prepublish": "npm run build"
+  },
+  "engines": {
+    "node": ">= 6.0"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "redis": "^2.7.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-destructuring": "^6.19.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
+    "babel-plugin-transform-es2015-parameters": "^6.24.1",
+    "babel-plugin-transform-es2015-spread": "^6.8.0",
+    "babel-plugin-transform-exponentiation-operator": "^6.24.1",
+    "babel-plugin-transform-flow-strip-types": "^6.18.0",
+    "babel-plugin-transform-object-rest-spread": "^6.16.0",
+    "coveralls": "^2.11.14",
+    "mocha": "^3.1.2",
+    "nyc": "^10.1.2"
+  }
+}
