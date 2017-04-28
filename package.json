@@ -23,10 +23,7 @@
   "engines": {
     "node": ">= 6.0"
   },
-  "dependencies": {
-    "bluebird": "^3.5.0",
-    "redis": "^2.7.1"
-  },
+  "dependencies": { },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
