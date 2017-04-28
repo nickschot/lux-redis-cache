@@ -1,13 +1,13 @@
 {
-  "name": "lux-redis",
+  "name": "lux-redis-cache",
   "version": "0.1.0",
-  "description": "Redis middleware.",
+  "description": "Redis caching middleware.",
   "keywords": [
     "redis",
     "lux",
     "lux-middleware"
   ],
-  "repository": "github:nickschot/lux-redis",
+  "repository": "github:nickschot/lux-redis-cache",
   "bugs": {
     "url": "http://github.com/nickschot/lux-redis/issues"
   },

@@ -1,11 +1,13 @@
-# lux-jwt
-Middleware implementation of Redis for [Lux](https://github.com/postlight/lux).
+# lux-redis-cache
+Middleware based cache implementation using Redis for [Lux](https://github.com/postlight/lux).
 
 ## Install
 
-    $ npm i --save lux-redis
+    $ npm i --save lux-redis-cache
 
 ## Usage
+
+> TODO: fill in a good example here.
 
 ## Related Modules
 
