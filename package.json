@@ -9,7 +9,7 @@
   ],
   "repository": "github:nickschot/lux-redis-cache",
   "bugs": {
-    "url": "http://github.com/nickschot/lux-redis/issues"
+    "url": "http://github.com/nickschot/lux-redis-cache/issues"
   },
   "author": "Nick Schot",
   "license": "MIT",
