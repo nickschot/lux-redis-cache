@@ -1,9 +1,10 @@
 {
   "name": "lux-redis-cache",
   "version": "0.1.0",
-  "description": "Redis caching middleware.",
+  "description": "Redis caching middleware for Lux.",
   "keywords": [
     "redis",
+    "cache",
     "lux",
     "lux-middleware"
   ],
@@ -23,7 +24,10 @@
   "engines": {
     "node": ">= 6.0"
   },
-  "dependencies": { },
+  "dependencies": {},
+  "peerDependencies": {
+    "redis": "2.x"
+  },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
