@@ -3,82 +3,78 @@ Middleware based cache implementation using Redis for [Lux](https://github.com/p
 
 ## Install
 
-    $ npm i --save lux-redis-cache
+    $ npm i --save lux-redis-cache redis
 
 ## Usage
+lux-redis-cache is, as the name implies, a caching middleware for lux using redis. Two middlewares which are to be used in a Lux controller are exposed: `getFromRedis` and `addToRedis`. They will cache any `GET` request on the `index` and `show` controller actions.
 
-Here is an example of a api wide implementation of the middleware, excluding specific routes.  and a basic redis util to pass into the middleware.  Currently you must initialize and provide your own promisifyAll'd redis client instance.
+By default the middlewares are configured as a naïve cache with implicit expiry. This means the cache will always return up-to-date data. It is recommended to set an automatic eviction policy like `allkeys-lru` in redis with this default setup so everything will continue to work when redis is filled up.
 
+Another option is to use a simple timed expiration. You can disable the naïve cache expiration and set an expiration time in seconds. This does mean the returned data is not necessarily up-to-date.
 
-app/controllers/application.js
+### getFromRedis(redis, options)
+`getFromRedis` is meant to be used in a `beforeAction` hook. It will try to get data from redis for any `GET` request from on an `index` or `show` controller action. It will immediately return the payload while the action/afterAction is skipped.
 
-```js
-import { Controller } from 'lux-framework';
-import unless from 'lux-unless';
-import redis from 'app/utils/redis';
-import { getFromRedis, addToRedis } from 'lux-redis-cache';
+- **redis** - A connected node-redis instance
+- **options** - Options object
+  - **cacheKey** *(default: 'cache')* - The name of the top level key for redis
+  - **naiveCacheExpiry** *(default: true)* - Set to false to disable naïve cache expiry
 
-const { REDIS_CACHE_EXPIRES_IN = 600 } = process.env; // 600 = 10 minutes
+### addToRedis(redis, options)
+`addToRedis` is meant to be used in an `afterAction` hook. It will add the response data to redis if the `getFromRedis` middleware detected the cache entry was missing. You can also pass an expiration time in the options object in order for your cache entries to expire in a certain number of seconds. This is meant mainly for when you don't use the naïve cache expiry.
 
-const pathsToNotCache = [
-  '/auth/login',
-  '/auth/token-refresh',
-  /product-(variants|separates)/gi,
-  /sync-logs/gi
-];
+- **redis** - A connected node-redis instance
+- **options** - Options object
+  - **expiresIn** *(default: -1)* - An expiration time in seconds
 
-class ApplicationController extends Controller {
-  beforeAction = [
-    ...,
-    unless({
-      path: pathsToNotCache,
-      method: ['OPTIONS']
-    }, getFromRedis({
-      naiveCacheExpiry: false,
-      redis
-    }))
-  ];
-  afterAction = [
-    ...
-    addToRedis({ expiresIn: REDIS_CACHE_EXPIRES_IN })
-  ];
-}
+## Graceful failover
+If redis becomes unavailable, the middleware will gracefully skip itself so your lux application will continue to work (albeit without redis). In order to keep your application from crashing when redis loses connection you must listen to errors on your node-redis instance and handle them. An example on how to do this is shown below.
 
-export default ApplicationController;
-```
-
-
+```javascript
 // app/utils/redis.js
+import { createClient } from 'redis';
 
-```js
-// load your env vars if needed.
-// import dotenv from './dotenv';
-// dotenv();
+// try to connect to REDIS_URL env variable or localhost
+const client = createClient(process.env.REDIS_URL || {});
 
-import bluebird from 'bluebird';
-import redis from 'redis';
-let client;
-
-if (typeof client !== 'object') {
-  const {
-    REDIS_HOST,
-    REDIS_PORT
-  } = process.env;
-
-  try {
-    client = redis.createClient(REDIS_PORT, REDIS_HOST);
-  } catch (e) {
-    debug('exception creating client: ', e);
-  }
-
-  bluebird.promisifyAll(redis.RedisClient.prototype);
-  bluebird.promisifyAll(redis.Multi.prototype);
-}
-
+client.on('error', function(e){
+    console.error('redis-cache', e);
+});
 
 export default client;
 ```
 
+## Example
+An example of using redis API-wide is shown below.
+
+```javascript
+// app/controllers/application.js
+import redis from 'app/utils/redis'
+import { getFromRedis, addToRedis } from 'lux-redis-cache';
+
+beforeAction = [
+    getFromRedis(redis)
+];
+
+afterAction = [
+    addToRedis(redis)
+];
+
+```
+
+```javascript
+// app/utils/redis.js
+import { createClient } from 'redis';
+
+// try to connect to REDIS_URL env variable or localhost
+const client = createClient(process.env.REDIS_URL || {});
+
+client.on('error', function(e){
+    console.error('redis-cache', e);
+});
+
+export default client;
+```
 
 ## Related Modules
 
