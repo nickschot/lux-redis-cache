@@ -76,6 +76,13 @@ client.on('error', function(e){
 export default client;
 ```
 
+The middleware can also be used in specific controllers in the same way. It is recommended not to nest redis usage (i.e. a parent and child controller both having the middlewares in their hooks).
+
+Finally you can use [lux-unless](https://github.com/nickschot/lux-unless) to exclude certain routes from being cached. It is not necessary to explicitly skip requests which are not `GET` combined with an `index` or `show` action, as those are the only ones the middleware will listen to.
+
+## Note
+The current version of this middleware only caches on the `index` and `show` action for controllers which have a model associated with them. Other controllers and actions are not cached yet.
+
 ## Related Modules
 
 - [lux-unless](https://github.com/nickschot/lux-unless) - Conditionally skip a middleware.
