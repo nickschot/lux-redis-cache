@@ -1,6 +1,6 @@
 {
   "name": "lux-redis-cache",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Redis caching middleware for Lux.",
   "keywords": [
     "redis",
