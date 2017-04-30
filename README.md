@@ -36,7 +36,7 @@ The cache expiration works as follows for the different actions.
   - **expiresIn** *(default: -1)* - An expiration time in seconds
 
 ### addToRedis(redis, options)
-`addToRedis` is meant to be used in an `afterAction` hook. It will add the response data to redis if the `getFromRedis` middleware detected the cache entry was missing.
+`addToRedis` is meant to be used in an `afterAction` hook. It will add the response data to redis if the `getFromRedis` middleware detected the cache entry was missing. No options can or need to be passed to this method. `getFromRedis` will share the necessary options.
 
 ## Graceful failover
 If redis becomes unavailable, the middleware will gracefully skip itself so your lux application will continue to work (albeit without redis). In order to keep your application from crashing when redis loses connection you must listen to errors on your node-redis instance and handle them. An example on how to do this is shown below.
