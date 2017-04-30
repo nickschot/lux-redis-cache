@@ -8,25 +8,35 @@ Middleware based cache implementation using Redis for [Lux](https://github.com/p
 ## Usage
 lux-redis-cache is, as the name implies, a caching middleware for lux using redis. Two middlewares which are to be used in a Lux controller are exposed: `getFromRedis` and `addToRedis`. They will cache any `GET` request on the `index` and `show` controller actions.
 
-By default the middlewares are configured as a naïve cache with implicit expiry. This means the cache will always return up-to-date data. It is recommended to set an automatic eviction policy like `allkeys-lru` in redis with this default setup so everything will continue to work when redis is filled up.
+It is recommended to use one of the available cache engines. They are outlined in the next section. By default the middlewares are configured as a naïve cache with implicit expiry.
 
 Another option is to use a simple timed expiration. You can disable the naïve cache expiration and set an expiration time in seconds. This does mean the returned data is not necessarily up-to-date.
 
+### Cache engines
+lux-redis-cache comes with two (optional) cache engines. They are outlined below. For all engines you can optionally set an explicit expiration time by passing the expiresIn option to the `getFromRedis` method. When using one of the cache engines it is recommended to set an automatic eviction policy like `allkeys-lru` in redis with this engine so everything will continue to work when redis is filled up.
+
+#### Naïve Cache Expiry (default)
+This engine keeps a cache key which is updated on a create/update/destroy action. This means the cache engine will always return up-to-date data.
+
+#### Relationship Based Cache Expiry
+This is a more efficient variant of the Naïve Cache Expiry. It works in the same manner but instead of a single expiry key it keeps expiration keys for each model.
+
+The cache expiration works as follows for the different actions.
+- **Create/Update action:** expire the model and direct belongsTo and hasMany relationships
+- **Destroy:** expire the whole cache, the database could be configured to CASCADE on delete, so we don't know what needs to be expired
+
 ### getFromRedis(redis, options)
-`getFromRedis` is meant to be used in a `beforeAction` hook. It will try to get data from redis for any `GET` request from on an `index` or `show` controller action. It will immediately return the payload while the action/afterAction is skipped.
+`getFromRedis` is meant to be used in a `beforeAction` hook. It will try to get data from redis for any `GET` request from on an `index` or `show` controller action. It will immediately return the payload while the action/afterAction is skipped. 
 
 - **redis** - A connected node-redis instance
 - **options** - Options object
   - **cacheKey** *(default: 'cache')* - The name of the top level key for redis
-  - **naiveCacheExpiry** *(default: true)* - Set to false to disable naïve cache expiry
+  - **cacheEngine** *(default: 'naiveCacheExpiry')* - Set to false, 'naiveCacheExpiry' or 'relationshipBasedCacheExpiry'
   - **enabled** *(default: true)* - Set to false to disable caching entirely
+  - **expiresIn** *(default: -1)* - An expiration time in seconds
 
 ### addToRedis(redis, options)
-`addToRedis` is meant to be used in an `afterAction` hook. It will add the response data to redis if the `getFromRedis` middleware detected the cache entry was missing. You can also pass an expiration time in the options object in order for your cache entries to expire in a certain number of seconds. This is meant mainly for when you don't use the naïve cache expiry.
-
-- **redis** - A connected node-redis instance
-- **options** - Options object
-  - **expiresIn** *(default: -1)* - An expiration time in seconds
+`addToRedis` is meant to be used in an `afterAction` hook. It will add the response data to redis if the `getFromRedis` middleware detected the cache entry was missing.
 
 ## Graceful failover
 If redis becomes unavailable, the middleware will gracefully skip itself so your lux application will continue to work (albeit without redis). In order to keep your application from crashing when redis loses connection you must listen to errors on your node-redis instance and handle them. An example on how to do this is shown below.
@@ -58,7 +68,7 @@ beforeAction = [
 ];
 
 afterAction = [
-    addToRedis(redis)
+    addToRedis()
 ];
 
 ```
