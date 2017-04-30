@@ -19,6 +19,7 @@ Another option is to use a simple timed expiration. You can disable the naïve c
 - **options** - Options object
   - **cacheKey** *(default: 'cache')* - The name of the top level key for redis
   - **naiveCacheExpiry** *(default: true)* - Set to false to disable naïve cache expiry
+  - **enabled** *(default: true)* - Set to false to disable cache entirely
 
 ### addToRedis(redis, options)
 `addToRedis` is meant to be used in an `afterAction` hook. It will add the response data to redis if the `getFromRedis` middleware detected the cache entry was missing. You can also pass an expiration time in the options object in order for your cache entries to expire in a certain number of seconds. This is meant mainly for when you don't use the naïve cache expiry.
