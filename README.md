@@ -63,14 +63,17 @@ An example of using redis API-wide is shown below.
 import redis from 'app/utils/redis'
 import { getFromRedis, addToRedis } from 'lux-redis-cache';
 
-beforeAction = [
-    getFromRedis(redis)
-];
+class ApplicationController extends Controller {
+  beforeAction = [
+      getFromRedis(redis)
+  ];
+  
+  afterAction = [
+      addToRedis()
+  ];
+}
 
-afterAction = [
-    addToRedis()
-];
-
+export default ApplicationController;
 ```
 
 ```javascript
