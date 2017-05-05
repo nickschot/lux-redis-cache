@@ -25,7 +25,7 @@ The cache expiration works as follows for the different actions.
 - **Create/Update action:** expire the model and direct belongsTo and hasMany relationships
 - **Destroy:** expire the whole cache, the database could be configured to CASCADE on delete, so we don't know what needs to be expired
 
-#### Time Based Cache Expiry
+#### Time Based Cache
 This is a very simple cache strategy which just caches data. It can be enhanced with time based expiration by setting the `expiresIn` option passed into `getFromRedis`.  No cache invalidation is provided with this strategy. This engine will not always return up-to-date data.
 
 ### getFromRedis(redis, options)
