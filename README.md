@@ -1,4 +1,6 @@
 # lux-redis-cache
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/nickschot/lux-redis-cache.svg)](https://greenkeeper.io/)
 Middleware based cache implementation using Redis for [Lux](https://github.com/postlight/lux).
 
 ## Install
