@@ -25,8 +25,11 @@ The cache expiration works as follows for the different actions.
 - **Create/Update action:** expire the model and direct belongsTo and hasMany relationships
 - **Destroy:** expire the whole cache, the database could be configured to CASCADE on delete, so we don't know what needs to be expired
 
+#### Time Based Cache Expiry
+This is a very simple cache strategy where we simply use the `expiresIn` option passed into `getFromRedis`.  No cache invalidation is provided with this strategy.
+
 ### getFromRedis(redis, options)
-`getFromRedis` is meant to be used in a `beforeAction` hook. It will try to get data from redis for any `GET` request from on an `index` or `show` controller action. It will immediately return the payload while the action/afterAction is skipped. 
+`getFromRedis` is meant to be used in a `beforeAction` hook. It will try to get data from redis for any `GET` request from on an `index` or `show` controller action. It will immediately return the payload while the action/afterAction is skipped.
 
 - **redis** - A connected node-redis instance
 - **options** - Options object
@@ -67,7 +70,7 @@ class ApplicationController extends Controller {
   beforeAction = [
       getFromRedis(redis)
   ];
-  
+
   afterAction = [
       addToRedis()
   ];
